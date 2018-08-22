@@ -7,6 +7,7 @@ import com.weatherdata.collection.cimiss.task.TaskUtil;
 import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
@@ -30,21 +31,28 @@ public class CollectionTaskController {
         return collectionTaskService.listTasks();
     }
 
+
+    @RequestMapping("/getTaskByCode")
+    public CimissSyncTask getTaskByCode(@RequestParam("taskCode")String  taskCode){
+        CimissSyncTask cimissSyncTask=collectionTaskService.getTaskByTaskCode(taskCode);
+        return cimissSyncTask;
+    }
+
     @RequestMapping("/saveTask")
     public CimissSyncTask saveTask(Map<String,Object> params, HttpServletRequest request){
         //String
          String taskCode =request.getParameter("taskCode").toString();
-         String dataTime = request.getParameter("dataTime").toString();
-         String dataInterval = request.getParameter("dataInterval").toString();
-         String taskTime = request.getParameter("taskTime").toString();
-         String taskDelay = request.getParameter("taskDelay").toString();
-         String taskInterval = request.getParameter("taskInterval").toString();
+         String dataTime = request.getParameter("dataStartTime").toString();
+         String dataInterval = request.getParameter("dataTimeInterval").toString();
+         String taskTime = request.getParameter("taskStartTime").toString();
+         String taskDelay = request.getParameter("taskTimeDelay").toString();
+         String taskInterval = request.getParameter("taskTimeInterval").toString();
          String collType = request.getParameter("collType").toString();
          String isRun = request.getParameter("isRun").toString();// 0关闭  1
          String isRetry = request.getParameter("isRetry").toString();
          String retryTimes = request.getParameter("retryTimes").toString();
          String retryInterval = request.getParameter("retryInterval").toString();
-         String dataType = request.getParameter("dataType").toString();
+        // String dataType = request.getParameter("dataType").toString();
          String areacodes = request.getParameter("areacodes").toString();
          String stations =request.getParameter("stations").toString();
 
@@ -59,7 +67,7 @@ public class CollectionTaskController {
          cimissSyncTask.setIsRetry(Integer.valueOf(isRetry));
          cimissSyncTask.setRetryTimes(Integer.valueOf(retryTimes));
          cimissSyncTask.setRetryInterval(Integer.valueOf(retryInterval));
-         cimissSyncTask.setDataType(Integer.valueOf(dataType));
+         //cimissSyncTask.setDataType(Integer.valueOf(dataType));
          cimissSyncTask.setAreacodes(areacodes);
          cimissSyncTask.setStationTypes(stations);
          collectionTaskService.saveCimissSyncTask(cimissSyncTask);
