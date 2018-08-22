@@ -16,7 +16,7 @@ public class Memcached {
      * @param data
      * @return
      */
-    public boolean setString(String key,Object data){
+    public boolean setObject(String key,Object data){
        return  mcc.set(key,data);
     }
 
@@ -25,7 +25,7 @@ public class Memcached {
      * @param key
      * @return
      */
-    public Object getString(String key){
+    public Object getObejct(String key){
         return mcc.get(key);
     }
 }

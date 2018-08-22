@@ -1,5 +1,8 @@
 package com.weatherdata.collection.cimiss.scheduler;
 
+import com.weatherdata.collection.cimiss.cached.Memcached;
+import com.weatherdata.collection.cimiss.model.CimissSyncTask;
+import com.weatherdata.collection.cimiss.service.CollectionTaskService;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,12 @@ public class CollDataScheduler {
 
     @Autowired
     private CollDataScheduler collDataScheduler;
+
+    @Autowired
+    private CollectionTaskService collectionTaskService;
+
+    @Autowired
+    private Memcached memcached;
 
     public void scheduleJobs() throws SchedulerException {
 
@@ -26,6 +35,8 @@ public class CollDataScheduler {
             JobDetail jobDetail = JobBuilder.newJob(jobClass/*MyJob1.class*/) .withIdentity(jobId, group).build();//设置Job的名字和组
             jobDetail.getJobDataMap().put("name","MyName");//动态添加数据
             jobDetail.getJobDataMap().put("collDataScheduler",collDataScheduler);
+            jobDetail.getJobDataMap().put("memcached",memcached);
+            jobDetail.getJobDataMap().put("collectionTaskService",collectionTaskService);
             //  corn表达式  每2秒执行一次
             CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(time/*"0/2 * * * * ?"*/);
 

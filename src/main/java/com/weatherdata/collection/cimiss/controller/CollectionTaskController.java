@@ -1,5 +1,6 @@
 package com.weatherdata.collection.cimiss.controller;
 
+import com.weatherdata.collection.cimiss.cached.Memcached;
 import com.weatherdata.collection.cimiss.model.CimissSyncTask;
 import com.weatherdata.collection.cimiss.scheduler.CollDataScheduler;
 import com.weatherdata.collection.cimiss.service.CollectionTaskService;
@@ -24,6 +25,9 @@ public class CollectionTaskController {
     //public
     @Autowired
     private CollectionTaskService collectionTaskService;
+
+    @Autowired
+    private Memcached memcached;
 
     @RequestMapping("/listTasks")
     public List<CimissSyncTask> listTasks(){
@@ -90,11 +94,22 @@ public class CollectionTaskController {
                  String timeStr=sdf.format(date);
                  String corn =TaskUtil.timeToCorn(timeStr);
                  System.out.println(corn);
+                 memcached.setObject(cimissSyncTask.getTaskCode(),cimissSyncTask);
                  if(flag){
                      //设置任务执行时间
+
                      collDataScheduler.modifyJobTime(cimissSyncTask.getTaskCode(),TASK_SCHEDULER_GROUP,corn);
                  }else{
-                     collDataScheduler.startJob(corn,TASK_SCHEDULER_GROUP,cimissSyncTask.getTaskCode(),"com.weatherdata.collection.cimiss.job.CimissMinuteJob");
+                     if(cimissSyncTask.getDataType()==1){//分钟
+                         collDataScheduler.startJob(corn,TASK_SCHEDULER_GROUP,cimissSyncTask.getTaskCode(),"com.weatherdata.collection.cimiss.job.CimissMinuteJob");
+
+                     }else if(cimissSyncTask.getDataType()==2){
+                         collDataScheduler.startJob(corn,TASK_SCHEDULER_GROUP,cimissSyncTask.getTaskCode(),"com.weatherdata.collection.cimiss.job.CimissHourJob");
+
+                     }else if(cimissSyncTask.getDataType() ==3){
+                         collDataScheduler.startJob(corn,TASK_SCHEDULER_GROUP,cimissSyncTask.getTaskCode(),"com.weatherdata.collection.cimiss.job.CimissDayJob");
+
+                     }
 
                  }
 

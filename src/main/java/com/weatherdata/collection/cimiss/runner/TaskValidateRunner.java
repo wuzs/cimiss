@@ -32,6 +32,7 @@ public class TaskValidateRunner implements ApplicationRunner {
                     CimissSyncTask cimissSyncTask = new CimissSyncTask();
                     cimissSyncTask.setTaskCode(task.get("taskCode").toString());
                     cimissSyncTask.setTaskName(task.get("taskName").toString());
+                    cimissSyncTask.setDataType(Integer.valueOf(task.get("dataType").toString()));
                     cimissSyncTask.setIsRun(0);
                     collectionTaskDao.save(cimissSyncTask);
                 }
